@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>LarryBlogCMS-Home</title>
+  <meta name="renderer" content="webkit"> 
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> 
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"> 
+  <meta name="apple-mobile-web-app-capable" content="yes">  
+  <meta name="format-detection" content="telephone=no"> 
+	<link rel="stylesheet" type="text/css" href="common/layui/css/layui.css" media="all">
+	<link rel="stylesheet" type="text/css" href="common/bootstrap/css/bootstrap.css" media="all">
+	<link rel="stylesheet" type="text/css" href="common/global.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css" media="all">
+</head>
+<body>
+<section class="larry-wrapper">
+  <!-- 提示数据 -->
+	<div class="row state-overview">
+		<div class="col-lg-3 col-sm-6 layui-anim layui-anim-up">
+			<section class="panel">
+				<div class="symbol userblue layui-anim layui-anim-rotate"> <i class="layui-icon layui-icon-user"></i>
+				</div>
+				<div class="value">
+					<a href="#">
+						<h1 id="count1"></h1>
+					</a>
+					<p>业主总量</p>
+				</div>
+			</section>
+		</div>
+		<div class="col-lg-3 col-sm-6 layui-anim layui-anim-up">
+			<section class="panel">
+				<div class="symbol commred layui-anim layui-anim-rotate"> <i class="layui-icon layui-icon-home"></i>
+				</div>
+				<div class="value">
+					<a href="#">
+						<h1 id="count2"></h1>
+					</a>
+					<p>房屋总数</p>
+				</div>
+			</section>
+		</div>
+		<div class="col-lg-3 col-sm-6 layui-anim layui-anim-up">
+			<section class="panel">
+				<div class="symbol articlegreen layui-anim layui-anim-rotate">
+					<i class="layui-icon layui-icon-set"></i>
+				</div>
+				<div class="value">
+					<a href="#">
+						<h1 id="count3"></h1>
+					</a>
+					<p>维修通知</p>
+				</div>
+			</section>
+		</div>
+		<div class="col-lg-3 col-sm-6 layui-anim layui-anim-up">
+			<section class="panel">
+				<div class="symbol rsswet layui-anim layui-anim-rotate">
+					<i class="layui-icon layui-icon-survey"></i>
+				</div>
+				<div class="value">
+					<a href="#">
+						<h1 id="count4"></h1>
+					</a>
+					<p>投诉通知</p>
+				</div>
+			</section>
+		</div>
+	</div>
+  <!-- 提示数据 end -->
+  
+  <!-- 首页模块 -->
+	<div class="row">
+		<div class="col-lg-6">
+      <!-- 租户/住户对比统计｛SEO数据统计｝ -->
+			<section class="panel">
+				<header class="panel-heading bm0">
+					<span class='span-title'>租户/住户对比</span>
+					<span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
+				</header>
+				<div class="panel-body" >
+          <div class="panel-body laery-seo-box">
+            <div class="larry-seo-stats" id="larry-seo-stats"></div>
+          </div>
+				</div>
+			</section>
+      <!-- 投诉维修信息统计｛SEO数据统计｝ -->
+      <section class="panel">
+        <header class="panel-heading bm0">
+          <span class='span-title'>投诉维修增长趋势</span>
+          <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
+        </header>
+        <div class="panel-body laery-seo-box">
+          <div class="larry-seo-stats" id="larry-seo-stats1"></div>
+        </div>
+      </section>
+		</div>
+		<div class="col-lg-6">
+		<!-- 系统公告 -->
+		<section class="panel">
+				<header class="panel-heading bm0">
+					<span class='span-title'>系统公告</span>
+					<span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
+				</header>
+				<div class="panel-body">
+					<table class="table table-hover personal-task">
+						<tbody>
+							<tr>
+								<td>
+									<strong>通知</strong>： 有新消息呀=_=
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>
+									<strong>维修通知</strong>： 今天已经处理了<span class="current_user" id="count5"></span>个维修任务，还有<span class="current_user" id="count6"></span>个维修任务要处理
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>
+									<strong>投诉通知</strong>： 今天已经处理了<span class="current_user" id="count7"></span>个投诉啦，还有<span class="current_user" id="count8"></span>个投诉要处理
+								</td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+		  <!-- 快捷操作 -->
+      <section class="panel">
+        <header class="panel-heading bm0">
+          <span class='span-title'>快捷操作</span>
+          <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
+        </header>
+        <div class="panel-body" style="padding:10px">
+          <button class="layui-btn layui-btn-radius layui-btn-primary layui-btn-sm" id="addOperation"><i class="layui-icon">&#xe608;</i> 添加</button>
+        </div>
+      </section>
+	  </div>
+  </div>
+</section>
+
+<script type="text/javascript" src="/common/layui/layui.js"></script>
+<script type="text/javascript" src="/jsplug/echarts.min.js"></script>
+<script type="text/javascript" src="/js/com.js"></script>
+<script type="text/javascript">
+	layui.use(['jquery','layer','element'],function(){
+		window.jQuery = window.$ = layui.jquery;
+		window.layer = layui.layer;
+    window.element = layui.element;
+
+		// 获取提示数据
+		$.get('/ajax/getHouseholdCount',function(res){
+			if(res.errcode === 0){
+				$('#count1').html(res.data);
+			} else {
+				layer.msg(res.mag,function(){})
+			}
+		})
+		$.get('/ajax/getHouseCount',function(res){
+			if(res.errcode === 0){
+				$('#count2').html(res.data);
+			} else {
+				layer.msg(res.mag,function(){})
+			}
+		})
+		$.get('/ajax/getRepairCount?endTime='+getNowFormatDate(),function(res){
+			if(res.errcode === 0){
+				$('#count3').html(res.data.unprocessed);
+				$('#count6').html(res.data.unprocessed)
+				$('#count5').html(res.data.processed)
+			} else {
+				layer.msg(res.mag,function(){})
+			}
+		})
+		$.get('/ajax/getComplaintCount?endTime='+getNowFormatDate(),function(res){
+			if(res.errcode === 0){
+				$('#count4').html(res.data.unprocessed);
+				$('#count8').html(res.data.unprocessed)
+				$('#count7').html(res.data.processed)
+			} else {
+				layer.msg(res.mag,function(){})
+			}
+		})
+
+
+
+    $('.panel .tools .iconpx-chevron-down').click(function(){
+      var el = $(this).parents(".panel").children(".panel-body");
+      if($(this).hasClass("iconpx-chevron-down")){
+       	$(this).removeClass("iconpx-chevron-down").addClass("iconpx-chevron-up");
+       	el.slideUp(200);
+      }else{
+       	$(this).removeClass("iconpx-chevron-up").addClass("iconpx-chevron-down");
+       	el.slideDown(200);
+      }
+    });
+
+    $('#addOperation').on('click',function(){
+	  layer.msg('该功能正在开发中，敬请期待哟=_=',function(){});
+	})
+		
+		/* echart图表实现 */
+		// 用户与租户对比
+		var myChart = echarts.init(document.getElementById('larry-seo-stats'));
+		$.get('/ajax/gethouseholdCompare').done(function(res){
+			if(res.errcode === 0){
+				myChart.setOption({
+					title : {
+								text: '住户与租户对比',        
+								x:'center'
+						},
+						tooltip : {
+								trigger: 'item',
+								formatter: "{a} <br/>{b} : {c} ({d}%)"
+						},
+						legend: {
+								orient: 'vertical',
+								left: 'left',
+								data: ['租户数量','住户数量']
+						},
+						series : [
+								{
+										name: '住户与租户对比',
+										type: 'pie',
+										radius : '55%',
+										center: ['50%', '60%'],
+										data:[
+												{value:res.data.tenant, name:'租户数量'},
+												{value:res.data.houseUser, name:'住户数量'},
+										],
+										itemStyle: {
+												emphasis: {
+														shadowBlur: 10,
+														shadowOffsetX: 0,
+														shadowColor: 'rgba(0, 0, 0, 0.5)'
+												}
+										}
+								}
+						]
+				})		
+			} else {
+				layer.msg("获取不到租户用户数据"+res.msg,function(){})
+				myChart.setOption({
+					title : {
+								text: '获取不到租户用户数据',        
+								x:'center'
+						},
+						tooltip : {},
+						legend: {
+								orient: 'vertical',
+								left: 'left',
+								data: ['租户数量','住户数量']
+						},
+						series : [
+								{
+										name: '住户与租户对比',
+										type: 'pie',
+										radius : '55%',
+										center: ['50%', '60%'],
+										data:[],
+										itemStyle: {
+												emphasis: {
+														shadowBlur: 10,
+														shadowOffsetX: 0,
+														shadowColor: 'rgba(0, 0, 0, 0.5)'
+												}
+										}
+								}
+						]
+				})
+			}
+		})
+		
+		// 投诉维修增长趋势
+		var myChart1 = echarts.init(document.getElementById('larry-seo-stats1'));
+		myChart1.setOption({
+					title: {
+							text: '近七日投诉和报修增长趋势',
+							left: '50%',
+							textAlign: 'center'
+					},
+					tooltip: {
+							trigger: 'axis',
+							axisPointer: {
+									lineStyle: {
+											color: '#ddd'
+									}
+							},
+							backgroundColor: 'rgba(255,255,255,1)',
+							padding: [5, 10],
+							textStyle: {
+									color: '#7588E4',
+							},
+							extraCssText: 'box-shadow: 0 0 5px rgba(0,0,0,0.3)'
+					},
+					legend: {
+							right: 20,
+							orient: 'vertical',
+							data: ['维修','投诉']
+					},
+					xAxis: {
+							type: 'category',
+							data: ['2018-05-13','2018-05-14','2018-05-15','2018-05-16','2018-05-17','2018-05-18','2018-05-19'],
+							boundaryGap: false,
+							splitLine: {
+									show: true,
+									interval: 'auto',
+									lineStyle: {
+											color: ['#D4DFF5']
+									}
+							},
+							axisTick: {
+									show: false
+							},
+							axisLine: {
+									lineStyle: {
+											color: '#609ee9'
+									}
+							},
+							axisLabel: {
+									margin: 10,
+									textStyle: {
+											fontSize: 14
+									}
+							}
+					},
+					yAxis: {
+							type: 'value',
+							splitLine: {
+									lineStyle: {
+											color: ['#D4DFF5']
+									}
+							},
+							axisTick: {
+									show: false
+							},
+							axisLine: {
+									lineStyle: {
+											color: '#609ee9'
+									}
+							},
+							axisLabel: {
+									margin: 10,
+									textStyle: {
+											fontSize: 14
+									}
+							}
+					},
+					series: [{
+							name: '维修',
+							type: 'line',
+							smooth: true,
+							showSymbol: false,
+							symbol: 'circle',
+							symbolSize: 6,
+							data: ['5', '2', '8', '0', '0', '12', '0'],
+							areaStyle: {
+									normal: {
+											color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+													offset: 0,
+													color: 'rgba(199, 237, 250,0.5)'
+											}, {
+													offset: 1,
+													color: 'rgba(199, 237, 250,0.2)'
+											}], false)
+									}
+							},
+							itemStyle: {
+									normal: {
+											color: '#f7b851'
+									}
+							},
+							lineStyle: {
+									normal: {
+											width: 3
+									}
+							}
+					}, {
+							name: '投诉',
+							type: 'line',
+							smooth: true,
+							showSymbol: false,
+							symbol: 'circle',
+							symbolSize: 6,
+							data: ['1', '2', '2', '0', '0', '3', '0'],
+							areaStyle: {
+									normal: {
+											color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+													offset: 0,
+													color: 'rgba(216, 244, 247,1)'
+											}, {
+													offset: 1,
+													color: 'rgba(216, 244, 247,1)'
+											}], false)
+									}
+							},
+							itemStyle: {
+									normal: {
+											color: '#58c8da'
+									}
+							},
+							lineStyle: {
+									normal: {
+											width: 3
+									}
+							}
+					}]
+				})
+		$.get('/ajax/getRepiarCompare?time='+getNowFormatDate()).done(function(res){
+			if(res.errcode === 0){
+				myChart1.setOption({
+				})		
+			} else {
+				layer.msg("获取不到租户用户数据"+res.msg,function(){})
+			}
+		})
+	});
+</script>
+</body>
+</html>

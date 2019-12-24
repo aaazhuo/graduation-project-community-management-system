@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>业主信息</title>
+	<meta name="renderer" content="webkit">	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">	
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">	
+	<meta name="apple-mobile-web-app-capable" content="yes">	
+	<meta name="format-detection" content="telephone=no">	
+	<link rel="stylesheet" type="text/css" href="/common/layui/css/layui.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/common/bootstrap/css/bootstrap.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/common/global.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/css/personal.css" media="all">
+</head>
+<body>
+<section class="layui-larry-box">
+	<div class="larry-personal">
+	    <div class="layui-tab">
+            <blockquote class="layui-elem-quote news_search">
+		        <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input name="householdName" placeholder="请输入业主姓名" class="layui-input search_input" type="text">
+                    </div>
+		            <a class="layui-btn search_btn" id="search_houseHoldInfo">查询</a>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-normal newsAdd_btn" href="/addHousehold"><i class="layui-icon">&#xe61f;</i>添加业主</a>
+                </div>
+	        </blockquote>
+			
+			<!-- 房屋信息 -->
+			<table id="userInfo" lay-filter="userInfo"></table>
+		</div>
+	</div>
+</section>
+<div id="editHousehold" style="display:none;padding:20px;">
+	<form class="layui-form" id="houseHoldEdit">
+		<input type="hidden" name="_id" autocomplete="off" class="layui-input">
+		<div class="layui-form-item">
+			<label class="layui-form-label">业主姓名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="name" lay-verify="required" placeholder="请输入业主姓名" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">业主电话</label>
+			<div class="layui-input-inline">
+				<input type="text" name="phone" lay-verify="phone" placeholder="请输入业主电话" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">房屋住址</label>
+			<div class="layui-input-inline">
+				<select name="houseId" lay-verify="required" lay-search id="address_search">
+					<option value="">请选择房屋住址</option>
+				</select> 
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">身份证</label>
+			<div class="layui-input-inline">
+				<input type="text" name="IDcard" lay-verify="identity" placeholder="请输入身份证" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">状态</label>
+			<div class="layui-input-block">
+				<input type="radio" name="status" value="已租" title="已租" checked />
+				<input type="radio" name="status" value="已购" title="已购" />
+			</div>
+        </div>
+        <div class="layui-form-item">
+			<label class="layui-form-label">是否户主</label>
+			<div class="layui-input-block">
+				<input type="radio" name="isOwner" value="户主" title="户主" checked />
+				<input type="radio" name="isOwner" value="户主家属" title="户主家属" />
+			</div>
+		</div>
+		<div class="layui-form-item layui-form-text">
+			<label class="layui-form-label">备注</label>
+			<div class="layui-input-block">
+				<textarea name="desc" placeholder="请输入备注" class="layui-textarea"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="confirmEdit"><i class="layui-icon">&#xe618;</i>确认修改</button>
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/html" id="barDemo">
+	<a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑业主信息</a>
+	<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
+</script>
+<script type="text/javascript" src="/common/layui/layui.js"></script>
+<script type="text/javascript" src="/js/com.js"></script>
+<script type="text/javascript">
+	layui.config({
+        base:'js/'
+    }).use(['jquery','layer','element','table','form','requestData'],function(){   
+		var element = layui.element,
+			  layer = layui.layer,
+			laypage = layui.laypage,
+				  $ = layui.jquery,
+			  table = layui.table,
+			   form = layui.form,
+		requestData = layui.requestData;
+			
+			
+		//渲染数据表格
+		var HouseholdTable = table.render({
+			elem: '#userInfo',
+			response:{
+				statusName: 'errcode', //数据状态的字段名称，默认：code
+				statusCode: 0, //成功的状态码，默认：0
+				countName: 'total', //数据总数的字段名称，默认：count
+				dataName: 'data' //数据列表的字段名称，默认：data
+			},
+			height: 660,
+			page:true,
+			limit:12,
+			limits:[12,20,30],
+			url: '/ajax/getHouseholdInfo', //数据接口
+			cols: [[ //表头
+				{title: '序号',type: 'numbers',width:100},
+				{field: 'name', title: '用户名', width:150,sort: true},
+				{field: 'phone', title: '电话', width:250},
+				{field: 'status', title: '状态', width: 100},
+				{field: 'isOwner', title: '业主身份', width: 150, },
+				{field: 'address', title: '房屋住址', sort: true},
+				{fixed: 'right', width:200, align:'center', toolbar: '#barDemo'} //这里的toolbar值是模板元素的选择器
+			]]
+		});
+
+		//监听工具条
+		table.on('tool(userInfo)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+			var data = obj.data; //获得当前行数据
+			var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+			var tr = obj.tr; //获得当前行 tr 的DOM对象
+			if(layEvent === 'edit'){ //查看
+				$.get('/ajax/getHouseAddress',function(res){
+					if(res.errcode === 0 ){
+						var content = '' ;
+						for (var i = 0;i< res.data.length; i++){
+							content = '<option value="'+res.data[i]._id+'">'+res.data[i].address+'</option>' + content;
+						}
+						fillForm(houseHoldEdit,data);
+						$('#address_search').append(content);
+						$('input:radio[value="'+data.status+'"]').attr('checked','true');
+						$('input:radio[value="'+data.isOwner+'"]').attr('checked','true');
+						form.render();
+					} else {
+						layer.msg("获取房屋住址失败："+res.msg,function(){});
+					}
+				})
+				fillForm(houseHoldEdit,data);
+				layer.open({
+					type: 1,
+					title:'编辑业主信息',
+					skin: 'layui-layer-rim', //加上边框
+  					area: ['600px', '580px'], //宽高
+					content: $('#editHousehold') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+				});
+			} else if(layEvent === 'del'){ //删除
+				layer.confirm('确认删除该条房屋信息吗？',{title:'删除业主'}, function(index){
+					requestData.todo('deleteHousehold',{_id:data._id},function(res){
+						if(res.errcode === 0){
+							layer.msg(res.msg)
+							obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+						} else {
+							layer.msg(res.msg,function(){});
+						}
+					});	
+					layer.close(index);
+				});
+			} 
+		});
+
+		$('#search_houseHoldInfo').on('click',function(){
+			var value = $('input[name="householdName"]').val();
+			HouseholdTable.reload({
+				where:{
+					name: value
+				},
+				page: {
+					curr: 1 //重新从第 1 页开始
+				}
+			})
+		})
+		// 确认编辑修改业主信息
+		form.on('submit(confirmEdit)',function(data){
+			data.field.address = $('#address_search').find("option:selected").text();
+			// 确认修改请求
+			$.post('/ajax/updateHousehold',data.field,function(res){
+				if(res.errcode === 0){
+					layer.alert("更新"+res.msg, {icon: 6},function(){
+						layer.closeAll();
+						location.reload();
+					})
+				} else {
+					layer.msg(res.msg,function(){});
+				}
+			})
+			return false
+		})
+    });
+</script>
+</body>
+</html>

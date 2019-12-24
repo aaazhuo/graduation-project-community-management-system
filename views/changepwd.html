@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>个人信息</title>
+	<meta name="renderer" content="webkit">	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">	
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">	
+	<meta name="apple-mobile-web-app-capable" content="yes">	
+	<meta name="format-detection" content="telephone=no">	
+	<link rel="stylesheet" type="text/css" href="/common/layui/css/layui.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/common/bootstrap/css/bootstrap.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/common/global.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/css/personal.css" media="all">
+</head>
+<body>
+<section class="layui-larry-box">
+	<div class="larry-personal">
+		<header class="larry-personal-tit">
+			<span>修改密码</span>
+		</header><!-- /header -->
+		<div class="larry-personal-body clearfix changepwd">
+			<form class="layui-form col-lg-4" method="post" action="">
+			 	<div class="layui-form-item">
+					<label class="layui-form-label">用户名</label>
+					<div class="layui-input-block">  
+					  	<input type="text" name="username"  autocomplete="off"  class="layui-input layui-disabled" value="admin" disabled="disabled" >
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">旧密码</label>
+					<div class="layui-input-block">  
+					  	<input type="password" name="oldPassword"  autocomplete="off"  class="layui-input" placeholder="请输入旧密码" lay-verify="required">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">新密码</label>
+					<div class="layui-input-block">  
+					  	<input type="password" name="newPassword"  autocomplete="off"  class="layui-input" placeholder="请输入新密码" lay-verify="newPassword">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">确认密码</label>
+					<div class="layui-input-block">  
+					  	<input type="password" name="conPassword"  autocomplete="off"  class="layui-input" placeholder="请输入确认新密码" lay-verify="conPassword">
+					</div>
+				</div>
+				<div class="layui-form-item change-submit">
+					<div class="layui-input-block">
+						<button class="layui-btn" lay-submit="" lay-filter="changepwd">立即提交</button>
+						<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</section>
+<script type="text/javascript" src="/common/layui/layui.js"></script>
+<script type="text/javascript">
+	layui.config({
+        base:'js/'
+    }).use(['form','jquery','layer','requestData'],function(){
+		var form    = layui.form,
+		 		$   = layui.jquery,
+			layer   = layui.layer,
+		requestData = layui.requestData;
+
+		/* 自定义表单校验规则 */
+		form.verify({
+			newPassword: function(value, item){ //value：表单的值、item：表单的DOM对象
+				if(value.length < 6 ||value.length >16){
+					return '新密码必须6到16位';
+				}
+				if(value === $('input[name="oldPassword"]').val()){
+					return '新密码与旧密码相同'
+				}
+			},
+			conPassword: function(value, item){ //value：表单的值、item：表单的DOM对象
+				if(value !== $('input[name="newPassword"]').val()){
+					return '确认密码与新密码不同'
+				}
+			}
+		});  
+		//监听提交
+		form.on('submit(changepwd)',function(data){
+			requestData.todo('changePwd',data.field,function(res){
+				console.log(res);
+				if(res.errcode === 0){
+					layer.msg(res.msg);
+					setTimeout(function(){
+						top.location.href = '/login'
+					},3000)
+				} else {
+					layer.msg(res.msg,function(){})
+				}
+			})
+			return false;
+		})
+	});
+</script>
+</body>
+</html>

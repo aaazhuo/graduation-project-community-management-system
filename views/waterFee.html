@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>水费信息</title>
+	<meta name="renderer" content="webkit">	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">	
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">	
+	<meta name="apple-mobile-web-app-capable" content="yes">	
+	<meta name="format-detection" content="telephone=no">	
+	<link rel="stylesheet" type="text/css" href="/common/layui/css/layui.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/common/bootstrap/css/bootstrap.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/common/global.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/css/personal.css" media="all">
+</head>
+<body>
+<section class="layui-larry-box">
+	<div class="larry-personal">
+	    <div class="layui-tab layui-form">
+            <blockquote class="layui-elem-quote news_search">
+		        <div class="layui-inline">
+                    <div class="layui-input-inline" style="width:200px">
+                        <input name="address" placeholder="请输入房屋住址" class="layui-input search_input" type="text">
+                    </div>
+                    <div class="layui-input-inline">
+                        <select name="status" lay-filter="status">
+                            <option value="">请选择缴费状态</option>
+                            <option value="已缴清">已缴清</option>
+                            <option value="欠缴">欠缴</option>
+                        </select>
+                    </div>
+		            <a class="layui-btn search_btn" id="search_water">查询</a>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-normal newsAdd_btn" href="/addWater"><i class="layui-icon">&#xe61f;</i>新增记录</a>
+                </div>
+	        </blockquote>
+			
+			<!-- 房屋信息 -->
+			<table id="waterInfo" lay-filter="waterInfo"></table>
+		</div>
+	</div>
+</section>
+<script type="text/html" id="barDemo">
+	{{#  if(d.status == '已缴清'){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="paid"><i class="layui-icon">&#x1005;</i>已缴清</a>
+	{{#  } }}
+	{{#  if(d.status == '欠缴'){ }}
+	<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="payment"><i class="layui-icon">&#xe65e;</i>缴费</a>
+	{{#  } }}     
+</script>
+<script type="text/javascript" src="/common/layui/layui.js"></script>
+<script type="text/javascript">
+	layui.use(['jquery','layer','element','table','form'],function(){   
+		var element = layui.element,
+			  layer = layui.layer,
+			laypage = layui.laypage,
+				  $ = layui.jquery,
+			  table = layui.table,
+			   form = layui.form;
+			
+			
+		//渲染数据表格
+		var WaterTable = table.render({
+			elem: '#waterInfo',
+			response:{
+				statusName: 'errcode', //数据状态的字段名称，默认：code
+				statusCode: 0, //成功的状态码，默认：0
+				countName: 'total', //数据总数的字段名称，默认：count
+				dataName: 'data' //数据列表的字段名称，默认：data
+			},
+			height: 660,
+			page:true,
+			limit:12,
+			limits:[12,20,30],
+			url: '/ajax/getProperty', //数据接口
+			where:{
+				type:'水费'
+			},
+			cols: [[ //表头
+				{title: '序号',type: 'numbers',width:100},
+				{field: 'startTime', title: '起止日期', width:150, sort: true},
+				{field: 'endTime', title: '截止日期', width:150,sort: true},
+				{field: 'actualAmount', title: '实际水费金额', width:150, sort: true},
+				{field: 'alreadyPaid', title: '已经缴纳金额', width:150},
+				{field: 'status', title: '状态', width: 100},
+				{field: 'address', title: '房屋地址', sort: true},
+				{field: 'desc', title: '备注', sort: true},
+				{fixed: 'right', width:200, align:'center', toolbar: '#barDemo'} //这里的toolbar值是模板元素的选择器
+			]]
+		});
+		
+		$('#search_water').on('click',function(){
+			var search_address = $('input[name="address"').val();
+			var search_status =$('select[name="status"]').val();
+			WaterTable.reload({
+				where:{
+					type:'水费',
+					address: search_address,
+					status: search_status
+				},
+				page: {
+					curr: 1 //重新从第 1 页开始
+				}
+			})
+		})
+        
+        //监听工具条
+		table.on('tool(waterInfo)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+			var data = obj.data; //获得当前行数据
+			var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+			var tr = obj.tr; //获得当前行 tr 的DOM对象
+			if(layEvent === 'payment'){ //查看
+				layer.prompt({title: '请输入缴纳金额',},function(val, index){
+					var status = (val + data.alreadyPaid >= data.actualAmount) ? '已缴清':'欠缴'
+					var reqData = {
+						_id:data._id,
+						status: status,
+						alreadyPaid: parseInt(data.alreadyPaid) + parseInt(val)
+					}
+					/* 请求 */
+					$.post('/ajax/updateProperty',reqData,function(res){
+						if(res.errcode === 0){
+							layer.alert(res.msg, {icon: 6},function(){
+								layer.closeAll();
+								location.reload();
+							})
+						} else {
+							layer.msg(res.msg,function(){});
+						}
+					})
+					layer.close(index);
+				});
+            } else if(layEvent === 'paid'){ //删除
+                layer.msg('此房屋在这时间段水费已经缴费完毕=_=',function(){})
+			} 
+		});
+    });
+</script>
+</body>
+</html>

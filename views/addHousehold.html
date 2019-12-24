@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>添加业主</title>
+	<meta name="renderer" content="webkit">	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">	
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">	
+	<meta name="apple-mobile-web-app-capable" content="yes">	
+	<meta name="format-detection" content="telephone=no">	
+	<link rel="stylesheet" type="text/css" href="/common/layui/css/layui.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/common/bootstrap/css/bootstrap.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/common/global.css" media="all">
+	<link rel="stylesheet" type="text/css" href="/css/personal.css" media="all">
+</head>
+<body>
+<section class="layui-larry-box">
+    <div class="larry-personal">
+	    <div class="layui-tab">
+            <blockquote class="layui-elem-quote news_search">
+			    <div class="layui-inline">
+				    <a class="layui-btn recommend" style="background-color:#5FB878" href="javascript:history.go(-1);"><i class="layui-icon">&#xe65c;</i>返回</a>
+			    </div>
+			</blockquote>
+			<header class="larry-personal-tit">
+			    <span>添加业主</span>
+		    </header>
+			<!-- 添加房屋信息 -->
+            <form class="layui-form">
+				<div class="layui-form-item">
+				    <label class="layui-form-label">房屋住址</label>
+				    <div class="layui-input-inline">
+				        <select name="houseId" lay-verify="required" lay-search id="address_search">
+							<option value="">请选择房屋住址</option>
+						</select> 
+				    </div>
+				</div>
+			    <div class="layui-form-item">
+				    <label class="layui-form-label">业主姓名</label>
+				    <div class="layui-input-inline">
+				        <input type="text" name="name" required  lay-verify="required" placeholder="请输入业主姓名" autocomplete="off" class="layui-input">
+				    </div>
+				</div>
+				<div class="layui-form-item">
+				    <label class="layui-form-label">业主电话</label>
+				    <div class="layui-input-inline">
+				  	    <input type="text" name="phone" required  lay-verify="phone" placeholder="请输入业主电话" autocomplete="off" class="layui-input">
+				    </div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">身份证</label>
+				    <div class="layui-input-inline">
+				        <input type="text" name="IDcard" required lay-verify="identity" placeholder="请输入身份证" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+				    <label class="layui-form-label">状态</label>
+				    <div class="layui-input-block">
+				      <input type="radio" name="status" value="已租" title="已租" checked />
+				      <input type="radio" name="status" value="已购" title="已购" />
+				    </div>
+				</div>
+                <div class="layui-form-item">
+				    <label class="layui-form-label">是否户主</label>
+				    <div class="layui-input-block">
+				      <input type="radio" name="isOwner" value="户主" title="户主" checked />
+				      <input type="radio" name="isOwner" value="户主家属" title="户主家属" />
+				    </div>
+				  </div>
+			    <div class="layui-form-item layui-form-text">
+				    <label class="layui-form-label">备注</label>
+				    <div class="layui-input-block">
+				        <textarea name="desc" placeholder="请输入备注" class="layui-textarea"></textarea>
+				    </div>
+				</div>
+				<div class="layui-form-item">
+				    <div class="layui-input-block">
+				        <button class="layui-btn" lay-submit lay-filter="newAddhousehold">立即提交</button>
+				        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				  </div>
+				</div>
+			</form>
+            <!-- 结束 -->
+            
+		</div>
+	</div>
+</section>
+<script type="text/javascript" src="/common/layui/layui.js"></script>
+<script>
+layui.use(['form','layer','jquery'], function(){
+	var layer = layui.layer,
+			$ = layui.jquery,
+		form  = layui.form;
+
+	// 获取房屋地址
+	$.get('/ajax/getHouseAddress',function(res){
+		if(res.errcode === 0 ){
+			var content = '' ;
+			for (var i = 0;i< res.data.length; i++){
+				content = '<option value="'+res.data[i]._id+'">'+res.data[i].address+'</option>' + content;
+			}
+			$('#address_search').append(content);
+			form.render();
+		} else {
+			layer.msg("获取房屋住址失败："+res.msg,function(){});
+		}
+	})
+
+    //监听提交
+    form.on('submit(newAddhousehold)', function(data){
+		data.field.address = $('#address_search').find("option:selected").text();
+	    $.post('/ajax/addHousehold',data.field,function(res){
+			if(res.errcode === 0){
+				layer.alert(res.msg, {icon: 6},function(){
+					layer.closeAll();
+					location.reload();
+				})
+			} else {
+				layer.msg(res.msg,function(){});
+			}
+	    })
+	    return false
+	});
+})
+</script>
+</body>
+</html>
